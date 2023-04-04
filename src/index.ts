@@ -79,18 +79,18 @@ io.on('connection', (socket: Socket) => {
     io.to(remoteId).emit('remotedisconnect');
   });
 
-  socket.on('mouse', ({ remoteId, mouseData }: { remoteId: string, mouseData: IMouseData }) => {
-    io.to(remoteId).emit('mouse', mouseData);
+  socket.on('mouse', ({ remoteId, data }: { remoteId: string, data: IMouseData }) => {
+    io.to(remoteId).emit('mouse', data);
   });
 
-  socket.on('scroll', ({ remoteId, scrollData }: { remoteId: string, scrollData: IScrollData }) => {
-    console.log(scrollData);
-    io.to(remoteId).emit('scroll', scrollData);
+  socket.on('scroll', ({ remoteId, data }: { remoteId: string, data: IScrollData }) => {
+    console.log(data);
+    io.to(remoteId).emit('scroll', data);
   });
 
-  socket.on('key', ({ remoteId, keyData }: { remoteId: string, keyData: IKeyData }) => {
-    console.log(keyData);
-    io.to(remoteId).emit('key', keyData);
+  socket.on('key', ({ remoteId, data }: { remoteId: string, data: IKeyData }) => {
+    console.log(data);
+    io.to(remoteId).emit('key', data);
   });
 });
 
