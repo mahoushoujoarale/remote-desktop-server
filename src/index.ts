@@ -4,6 +4,7 @@ const socketIo = require('socket.io');
 const server = require('http').createServer(app);
 const ExpressPeerServer = require('peer').ExpressPeerServer;
 import { Socket } from 'socket.io';
+import { IKeyData, IMouseData, IScrollData, IUserInfo } from './type';
 
 app.use(
   '/peerjs',
@@ -46,7 +47,7 @@ io.on('connection', (socket: Socket) => {
     });
   });
 
-  socket.on('remoteconnect', ({ userInfo, remoteId }) => {
+  socket.on('remoteconnect', ({ remoteId, userInfo }: { remoteId: string, userInfo: IUserInfo }) => {
     if (!io.sockets.adapter.rooms.has(remoteId)) {
       socket.emit('remotenotexist');
       return;
@@ -66,7 +67,7 @@ io.on('connection', (socket: Socket) => {
     io.to(remoteId).emit('remotetimeout');
   });
 
-  socket.on('remoteconnected', ({ remoteId, startTime }) => {
+  socket.on('remoteconnected', ({ remoteId, startTime }: { remoteId: string, startTime: number }) => {
     io.to(remoteId).emit('remoteconnected', startTime);
     connectionMap.set(remoteId, userMap.get(socket.id)!);
     connectionMap.set(userMap.get(socket.id)!, remoteId);
@@ -78,18 +79,18 @@ io.on('connection', (socket: Socket) => {
     io.to(remoteId).emit('remotedisconnect');
   });
 
-  socket.on('mouse', ({ remoteId, data }) => {
-    io.to(remoteId).emit('mouse', data);
+  socket.on('mouse', ({ remoteId, mouseData }: { remoteId: string, mouseData: IMouseData }) => {
+    io.to(remoteId).emit('mouse', mouseData);
   });
 
-  socket.on('scroll', ({ remoteId, data }) => {
-    console.log(data);
-    io.to(remoteId).emit('scroll', data);
+  socket.on('scroll', ({ remoteId, scrollData }: { remoteId: string, scrollData: IScrollData }) => {
+    console.log(scrollData);
+    io.to(remoteId).emit('scroll', scrollData);
   });
 
-  socket.on('key', ({ remoteId, data }) => {
-    console.log(data);
-    io.to(remoteId).emit('key', data);
+  socket.on('key', ({ remoteId, keyData }: { remoteId: string, keyData: IKeyData }) => {
+    console.log(keyData);
+    io.to(remoteId).emit('key', keyData);
   });
 });
 
