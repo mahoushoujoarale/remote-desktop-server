@@ -84,13 +84,11 @@ io.on('connection', (socket: Socket) => {
 
   socket.on('scroll', (data: IScrollData) => {
     const remoteId= connectionMap.get(userId)!;
-    console.log(data);
     io.to(remoteId).emit('scroll', data);
   });
 
   socket.on('key', (data: IKeyData) => {
     const remoteId= connectionMap.get(userId)!;
-    console.log(data);
     io.to(remoteId).emit('key', data);
   });
 });
