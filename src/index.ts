@@ -19,20 +19,18 @@ const io = socketIo(server, {
   },
 });
 
-// 映射socket-id和ID
-const userMap = new Map<string, string>();
 // 映射连接关系
 const connectionMap = new Map<string, string>();
 
 io.on('connection', (socket: Socket) => {
+  let userId = '';
   socket.on('join', function (id) {
     console.log('User joined ' + id);
-    userMap.set(socket.id, id);
+    userId = id;
     socket.join(id);
   });
 
   socket.on('disconnect', () => {
-    const userId = userMap.get(socket.id)!;
     console.log('disconnect', userId);
     if (connectionMap.has(userId)) {
       const remoteId = connectionMap.get(userId)!;
@@ -40,7 +38,6 @@ io.on('connection', (socket: Socket) => {
       connectionMap.delete(userId);
       connectionMap.delete(remoteId);
     }
-    userMap.delete(socket.id);
     socket.rooms.forEach(room => {
       console.log('User leave' + room);
       socket.leave(room);
@@ -69,26 +66,30 @@ io.on('connection', (socket: Socket) => {
 
   socket.on('remoteconnected', ({ remoteId, startTime }: { remoteId: string, startTime: number }) => {
     io.to(remoteId).emit('remoteconnected', startTime);
-    connectionMap.set(remoteId, userMap.get(socket.id)!);
-    connectionMap.set(userMap.get(socket.id)!, remoteId);
+    connectionMap.set(remoteId, userId);
+    connectionMap.set(userId, remoteId);
   });
 
-  socket.on('remotedisconnect', (remoteId: string) => {
+  socket.on('remotedisconnect', () => {
+    const remoteId= connectionMap.get(userId)!;
     connectionMap.delete(remoteId);
-    connectionMap.delete(userMap.get(socket.id)!);
+    connectionMap.delete(userId);
     io.to(remoteId).emit('remotedisconnect');
   });
 
-  socket.on('mouse', ({ remoteId, data }: { remoteId: string, data: IMouseData }) => {
+  socket.on('mouse', (data: IMouseData) => {
+    const remoteId= connectionMap.get(userId)!;
     io.to(remoteId).emit('mouse', data);
   });
 
-  socket.on('scroll', ({ remoteId, data }: { remoteId: string, data: IScrollData }) => {
+  socket.on('scroll', (data: IScrollData) => {
+    const remoteId= connectionMap.get(userId)!;
     console.log(data);
     io.to(remoteId).emit('scroll', data);
   });
 
-  socket.on('key', ({ remoteId, data }: { remoteId: string, data: IKeyData }) => {
+  socket.on('key', (data: IKeyData) => {
+    const remoteId= connectionMap.get(userId)!;
     console.log(data);
     io.to(remoteId).emit('key', data);
   });

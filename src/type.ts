@@ -23,6 +23,7 @@ export interface IScrollData {
 
 export interface IKeyData {
   key: string;
+  isMac: boolean;
   meta: boolean;
   alt: boolean;
   ctrl: boolean;
