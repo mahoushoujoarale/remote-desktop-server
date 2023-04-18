@@ -93,8 +93,8 @@ io.on('connection', (socket: Socket) => {
   });
 });
 
-server.listen(8010, () => {
+const port = process.env.PORT ?? 8010;
+
+server.listen(port, () => {
   console.log('Server started');
 });
-
-module.exports = server;
