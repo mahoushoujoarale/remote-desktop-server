@@ -1,0 +1,5 @@
+services:
+  - name: remote-desktop-server
+    plan: Starter
+    buildCommand: NODE_VERSION=16 yarn && yarn build
+    startCommand: NODE_VERSION=16 node dist/index.js
