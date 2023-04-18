@@ -96,3 +96,5 @@ io.on('connection', (socket: Socket) => {
 server.listen(8010, () => {
   console.log('Server started');
 });
+
+module.exports = server;
